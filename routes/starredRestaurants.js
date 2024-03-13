@@ -52,7 +52,7 @@ router.get("/:id", (req, res) => {
   // create a variable to store the ID
   const { id } = req.params;
 
-  // join all of the starred restaurants inot a new array
+  // join all of the starred restaurants in to a new array
   const joinedStarredRestaurants = STARRED_RESTAURANTS.map(
     (starredRestaurant) => {
       const restaurant = ALL_RESTAURANTS.find(
