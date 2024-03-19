@@ -37,7 +37,7 @@ router.get("/", (req, res) => {
       return {
         id: starredRestaurant.id,
         comment: starredRestaurant.comment,
-        name: restaurant.name,
+        // name: restaurant.name,
       };
     }
   );
@@ -107,7 +107,7 @@ router.post("/", (req, res) => {
     
     // set success status, send data to front-end
     res.sendStatus(200);
-    console.log("post request: Add new StarredRestaurant working ✅")
+    console.log(`post request: ${name} added to StarredRestaurant list ✅`)
 })
 
 
@@ -127,13 +127,33 @@ router.delete("/:id", (req, res) => {
   STARRED_RESTAURANTS = newListOfStarredRestaurants;
   
   res.sendStatus(200);
-  console.log("detlete request: delete restaruant from StarredRestaurants working ✅")
+  console.log(`detlete request: restaurant with id: ${id} deleted ✅`)
 });
 
 /**
  * Feature 10: Updating your comment of a starred restaurant.
  */
+router.put("/:id", (req, res) => {
+const { id } = req.params;
+const { newComment } = req.body;
+  // Find r in STARRED_RESTAURANTS
+  const foundRestaurant = STARRED_RESTAURANTS.find((r) => r.id === id);
+  // if r doesn't exist, send status code
+  if (!foundRestaurant) {
+    res.sendStatus(404);
+    return;
+  }
+  // EXTRA: Error hanbdling if there is no {newComment}
+  if (!newComment) {
+    // res.sendStatus(400).json({error: "A new comment is required, please. ❌"});
+  }
 
+  // update r's comment included in request body
+  foundRestaurant.comment = newComment;
+  // send success code
+  res.sendStatus(200);
+  console.log(`Put request: updated ${foundRestaurant.name} with id: ${id} ✅`);
+});
 
 
 module.exports = router;
