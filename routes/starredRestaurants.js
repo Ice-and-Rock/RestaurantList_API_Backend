@@ -82,13 +82,53 @@ router.get("/:id", (req, res) => {
 /**
  * Feature 8: Adding to your list of starred restaurants.
  */
-
+router.post("/", (req, res) => {
+  // create a variable for restaurant name
+  const { body } = req;
+  const { name, comment } = body;
+  // find the restaurant in STARRED_RESTAURANTS
+  const foundStarredRestaurant = STARRED_RESTAURANTS.find((restaurant) => restaurant.name === name);
+  // if no restaurant exists, send error report
+  if (!foundStarredRestaurant) {
+    res.sendStatus(404);
+    return;
+  }
+  // Add restaurant to STARRED_RESTAURANTS
+    // generate unique ID
+    const newId = uuidv4();
+    // create a record for new starred restaurant
+    const newStarredRestaurant = {
+      id: newId,
+      name,
+      comment,
+    };
+    // push new record into STARRED_RESTAURANTS
+    STARRED_RESTAURANTS.push(newStarredRestaurant);
+    
+    // set success status, send data to front-end
+    res.sendStatus(200);
+    console.log("post request: Add new StarredRestaurant working ✅")
+})
 
 
 /**
  * Feature 9: Deleting from your list of starred restaurants.
  */
-
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  // use .filter() to remove r from STARRED_RESTAURANTS and save in variable
+  const newListOfStarredRestaurants = STARRED_RESTAURANTS.filter((r) => r.id !== id);
+  // if r doesn't exist using .length of data array, send status code
+  if (STARRED_RESTAURANTS.length === newListOfStarredRestaurants.length) {
+    res.sendStatus(404);
+    return;
+  }
+  // reassign STARRED_RESTAURANTS with updated list from variable
+  STARRED_RESTAURANTS = newListOfStarredRestaurants;
+  
+  res.sendStatus(200);
+  console.log("detlete request: delete restaruant from StarredRestaurants working ✅")
+});
 
 /**
  * Feature 10: Updating your comment of a starred restaurant.
