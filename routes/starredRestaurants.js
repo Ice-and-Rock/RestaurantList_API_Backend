@@ -37,7 +37,7 @@ router.get("/", (req, res) => {
       return {
         id: starredRestaurant.id,
         comment: starredRestaurant.comment,
-        // name: restaurant.name,
+        name: restaurant.name,
       };
     }
   );
@@ -52,29 +52,17 @@ router.get("/:id", (req, res) => {
   // create a variable to store the ID
   const { id } = req.params;
 
-  // join all of the starred restaurants in to a new array
-  const joinedStarredRestaurants = STARRED_RESTAURANTS.map(
-    (starredRestaurant) => {
-      const restaurant = ALL_RESTAURANTS.find(
-        (r) => r.id === starredRestaurant.restaurantId
-      );
-      return restaurant;
-    });
-      // find the restaurant with the id in the new list
-      const foundRestaurant = joinedStarredRestaurants.find((restaurant) => restaurant.id === id);
+       // Find the restaurant with the matching id.
+      const foundRestaurant = STARRED_RESTAURANTS.find((restaurant) => restaurant.id === id);
 
       // if the restaurant doesn't exist, report the error 
       if (!foundRestaurant) {
         res.sendStatus(404);
         return;
       }
-  const foundRestaurantData = {
-    id: foundRestaurant.id,
-    comment: foundRestaurant.comment,
-    name: foundRestaurant.name
-  }
+
     // return the restaurant in JSON
-    res.json(foundRestaurantData); 
+    res.json(foundRestaurant); 
     }
 );
 
@@ -85,29 +73,33 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   // create a variable for restaurant name
   const { body } = req;
-  const { name, comment } = body;
+  const { id } = body;
   // find the restaurant in STARRED_RESTAURANTS
-  const foundStarredRestaurant = STARRED_RESTAURANTS.find((restaurant) => restaurant.name === name);
+  const foundStarredRestaurant = STARRED_RESTAURANTS.find((restaurant) => restaurant.id === id);
   // if no restaurant exists, send error report
   if (!foundStarredRestaurant) {
     res.sendStatus(404);
     return;
   }
-  // Add restaurant to STARRED_RESTAURANTS
+  
     // generate unique ID
     const newId = uuidv4();
     // create a record for new starred restaurant
     const newStarredRestaurant = {
       id: newId,
-      name,
-      comment,
+      restaurantId: restaurant.id,
+      comment: null,
     };
     // push new record into STARRED_RESTAURANTS
     STARRED_RESTAURANTS.push(newStarredRestaurant);
     
+    console.log(`post request: ${id} added to StarredRestaurant list ✅`)
     // set success status, send data to front-end
-    res.sendStatus(200);
-    console.log(`post request: ${name} added to StarredRestaurant list ✅`)
+    res.status(200).send({
+      id:newStarredRestaurant.id,
+      comment: newStarredRestaurant.comment,
+      name: newStarredRestaurant.name
+    });
 })
 
 
@@ -118,7 +110,7 @@ router.delete("/:id", (req, res) => {
   const { id } = req.params;
   // use .filter() to remove r from STARRED_RESTAURANTS and save in variable
   const newListOfStarredRestaurants = STARRED_RESTAURANTS.filter((r) => r.id !== id);
-  // if r doesn't exist using .length of data array, send status code
+  // The user tried to unstar a restaurant that isn't currently starred
   if (STARRED_RESTAURANTS.length === newListOfStarredRestaurants.length) {
     res.sendStatus(404);
     return;
@@ -127,6 +119,7 @@ router.delete("/:id", (req, res) => {
   STARRED_RESTAURANTS = newListOfStarredRestaurants;
   
   res.sendStatus(200);
+  
   console.log(`detlete request: restaurant with id: ${id} deleted ✅`)
 });
 
@@ -145,13 +138,14 @@ const { newComment } = req.body;
   }
   // EXTRA: Error hanbdling if there is no {newComment}
   if (!newComment) {
-    // res.sendStatus(400).json({error: "A new comment is required, please. ❌"});
+    res.sendStatus(400).json({error: "A new comment is required, please. ❌"});
   }
 
   // update r's comment included in request body
   foundRestaurant.comment = newComment;
   // send success code
   res.sendStatus(200);
+  
   console.log(`Put request: updated ${foundRestaurant.name} with id: ${id} ✅`);
 });
 
