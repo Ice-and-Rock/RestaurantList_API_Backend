@@ -75,9 +75,9 @@ router.post("/", (req, res) => {
   const { body } = req;
   const { id } = body;
   // find the restaurant in STARRED_RESTAURANTS
-  const foundStarredRestaurant = STARRED_RESTAURANTS.find((restaurant) => restaurant.id === id);
+  const restaurant = ALL_RESTAURANTS.find((restaurant) => restaurant.id === id);
   // if no restaurant exists, send error report
-  if (!foundStarredRestaurant) {
+  if (!restaurant) {
     res.sendStatus(404);
     return;
   }
@@ -98,7 +98,7 @@ router.post("/", (req, res) => {
     res.status(200).send({
       id:newStarredRestaurant.id,
       comment: newStarredRestaurant.comment,
-      name: newStarredRestaurant.name
+      name: restaurant.name
     });
 })
 
