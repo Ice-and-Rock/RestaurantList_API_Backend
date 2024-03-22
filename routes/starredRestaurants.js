@@ -74,7 +74,7 @@ router.post("/", (req, res) => {
   // create a variable for restaurant name
   const { body } = req;
   const { id } = body;
-  // find the restaurant in STARRED_RESTAURANTS
+  // find the restaurant in ALL_RESTAURANTS
   const restaurant = ALL_RESTAURANTS.find((restaurant) => restaurant.id === id);
   // if no restaurant exists, send error report
   if (!restaurant) {
@@ -93,8 +93,11 @@ router.post("/", (req, res) => {
     // push new record into STARRED_RESTAURANTS
     STARRED_RESTAURANTS.push(newStarredRestaurant);
     
-    console.log(`post request: ${id} added to StarredRestaurant list ✅`)
+    // console.log(`post request: ${id} added to StarredRestaurant list ✅`)
+
     // set success status, send data to front-end
+      // the data must be the restaurant found from ALL_RESTAURANTS
+      // + the newStarredRestaurant Id/Comment
     res.status(200).send({
       id:newStarredRestaurant.id,
       comment: newStarredRestaurant.comment,
@@ -120,7 +123,7 @@ router.delete("/:id", (req, res) => {
   
   res.sendStatus(200);
   
-  console.log(`detlete request: restaurant with id: ${id} deleted ✅`)
+  // console.log(`detlete request: restaurant with id: ${id} deleted ✅`)
 });
 
 /**
@@ -146,7 +149,7 @@ const { newComment } = req.body;
   // send success code
   res.sendStatus(200);
   
-  console.log(`Put request: updated ${foundRestaurant.name} with id: ${id} ✅`);
+  // console.log(`Put request: updated ${foundRestaurant.name} with id: ${id} ✅`);
 });
 
 
